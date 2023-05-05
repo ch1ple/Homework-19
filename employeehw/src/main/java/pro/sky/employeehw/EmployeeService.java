@@ -2,54 +2,50 @@ package pro.sky.employeehw;
 
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class EmployeeService {
-    private final List<Employee> employees = new ArrayList<>();
+    private static final int SIZE = 10;
+    private final Map<String, Employee> employees = new HashMap<>();
 
-    public Employee addEmployee(String firstName, String lastName) {
-        if (employees.size() > 300) {
+    public Employee addEmployee(String firstName,
+                                String lastName,
+                                String middleName,
+                                int salary,
+                                int department,
+                                int age) {
+        var key = lastName + " " + firstName + " " + middleName;
+        var employee = new Employee(firstName, lastName, middleName, salary, department, age);
+        if (employees.size() > SIZE) {
             throw new EmployeeStoragelsFullException();
         }
-        for (Employee employee : employees) {
-            if (employee.getFirstName().equals(firstName) && employee.getLastName().equals(lastName)) {
-                throw new EmployeeAlreadyAddedException();
+        if (employees.containsKey(key)) {
+            throw new EmployeeAlreadyAddedException();
             }
+        employees.put(key, employee);
+        return employee;
         }
-        employees.add(new Employee(firstName, lastName));
-        return null;
-    }
 
-    public Employee removeEmployee(String firstName, String lastName) {
-        Employee e = null;
-        var it = employees.iterator();
-        while (it.hasNext()) {
-            var employee = it.next();
-            if (employee.getFirstName().equals(firstName) && employee.getLastName().equals(lastName)) {
-                it.remove();
-                System.out.println(employee);
-            }
-        }
-        if (e != null) {
+    public Employee removeEmployee(String firstName, String lastName, String middleName) {
+        var key = lastName + " " + firstName + " " + middleName;
+        var removed = employees.remove(key);
+        if (removed == null) {
             throw new EmployeeNotFoundException();
         }
-        return e;
+        return removed;
     }
 
-    public Employee getEmployee(String firstName, String lastName) {
-        for (Employee employee : employees) {
-            if (employee.getFirstName().equals(firstName) && employee.getLastName().equals(lastName)) {
-                return employee;
-            }
+    public Employee getEmployee(String firstName, String lastName, String middleName) {
+        var key = lastName + " " + firstName + " " + middleName;
+        var employee = employees.get(key);
+        if (employee == null) {
+            throw new EmployeeNotFoundException();
         }
-        throw new EmployeeNotFoundException();
+        return employee;
     }
 
-    public Collection<Employee> getEmployees() {
-        return Collections.unmodifiableList(employees);
+    public Map<String, Employee> getEmployees() {
+        return employees;
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/employee")
@@ -18,26 +19,35 @@ public class EmployeeController {
     }
 
     @GetMapping("/add")
-    public ResponseEntity<Employee> add(@RequestParam String firstName, @RequestParam String lastName) {
+    public ResponseEntity<Employee> add(@RequestParam String firstName,
+                                        @RequestParam String lastName,
+                                        @RequestParam String middleName,
+                                        @RequestParam int salary,
+                                        @RequestParam int department,
+                                        @RequestParam int age) {
         try {
-            return ResponseEntity.ok(employeeService.addEmployee(firstName, lastName));
+            return ResponseEntity.ok(employeeService.addEmployee(firstName, lastName, middleName, salary, department, age));
         } catch (EmployeeStoragelsFullException e) {
             return ResponseEntity.status(500).build();
         }
     }
 
     @GetMapping("/remove")
-    public Employee remove(@RequestParam String firstName, @RequestParam String lastName) {
-        return employeeService.removeEmployee(firstName, lastName);
+    public Employee remove(@RequestParam String firstName,
+                           @RequestParam String lastName,
+                           @RequestParam String middleName) {
+        return employeeService.removeEmployee(firstName, lastName, middleName);
     }
 
     @GetMapping("/find")
-    public Employee find(@RequestParam String firstName, @RequestParam String lastName) {
-        return employeeService.getEmployee(firstName, lastName);
+    public Employee find(@RequestParam String firstName,
+                         @RequestParam String lastName,
+                         @RequestParam String middleName) {
+        return employeeService.getEmployee(firstName, lastName, middleName);
     }
 
     @GetMapping("/all")
-    public Collection<Employee> all() {
+    public Map<String, Employee> all() {
         return employeeService.getEmployees();
     }
 }
