@@ -70,4 +70,3 @@ public class EmployeeService {
         return isAlpha(firstName) && isAlpha(lastName);
     }
 }
-
